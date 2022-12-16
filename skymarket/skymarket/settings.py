@@ -33,8 +33,6 @@ ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
-
-# TODO здесь тоже нужно подключить Swagger и corsheaders
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -42,10 +40,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_extensions",
     "rest_framework",
+    "drf_spectacular",
+    "rest_framework_simplejwt",
+    "corsheaders",
     "users",
     "ads",
     "redoc",
+
 ]
 
 
@@ -82,6 +85,10 @@ WSGI_APPLICATION = "skymarket.wsgi.application"
 
 # TODO здесь мы настраиваем аутентификацию и пагинацию
 REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 # TODO здесь мы настраиваем Djoser
 DJOSER = {
@@ -92,6 +99,14 @@ DJOSER = {
 
 # TODO здесь необходимо настроить подключение к БД
 DATABASES = {
+    'default': {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "HOST": os.environ.get("DB_HOST", "localhost"),
+        "NAME": os.environ.get("POSTGRES_NAME", "skymarket"),
+        "PORT": os.environ.get("DB_PORT", "5432"),
+        "USER": os.environ.get("DB_USER", "postgres"),
+        "PASSWORD": os.environ.get("DB_PASSWORD", "admin"),
+    },
 }
 
 
@@ -136,6 +151,7 @@ MEDIA_URL = "/django_media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "django_media")
 
 # CORS
+
 CORS_ALLOW_ALL_ORIGINS = True
 
 # Default primary key field type
@@ -143,6 +159,11 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Skymarket API',
+    'DESCRIPTION': 'Awesome skymarket project',
+    'VERSION': '1.0.0',
+}
 
 # Include Email Backend
 # TODO эти переменные мы добавили чтобы помочь Вам настроить почтовый ящик на django.
@@ -153,3 +174,6 @@ EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = os.environ.get("EMAIL_PORT")
+
+
+AUTH_USER_MODEL = 'users.User'
